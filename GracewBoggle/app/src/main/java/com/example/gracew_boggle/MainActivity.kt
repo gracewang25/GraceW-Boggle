@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), GameActions {
 
     private fun loadDictionaryWords(): Set<String> {
         val words = mutableSetOf<String>()
-        val reader = BufferedReader(InputStreamReader(values.open("words.txt")))
+        val reader = BufferedReader(InputStreamReader(assets.open("words.txt")))
         var line = reader.readLine()
         while (line != null) {
             words.add(line.trim())
