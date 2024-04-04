@@ -19,26 +19,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onSubmitWord(word: String) {
+    fun onSubmitWord(word: String) {
         val scoreFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as? ScoreFragment
         scoreFragment?.validateWord(word)
     }
 
-    override fun onClearWord() {
+    fun onClearWord() {
         val gameFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as? GameFragment
         gameFragment?.clearSelection()
     }
 
-    override fun onNewGame() {
+    fun onNewGame() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, GameFragment.newInstance())
             .commitNow()
-
     }
-    override fun updateSelectedWord(word: String) {
-        // Update the UI or pass the word to the ScoreFragment for validation
-        // For example, if you have a TextView that displays the current word:
+
+    fun updateSelectedWord(word: String) {
         val wordTextView = findViewById<TextView>(R.id.currentWordTextView)
         wordTextView.text = word
     }

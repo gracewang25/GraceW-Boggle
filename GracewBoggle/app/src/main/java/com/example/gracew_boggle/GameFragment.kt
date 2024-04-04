@@ -30,16 +30,17 @@ class GameFragment : Fragment() {
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         val letters = generateRandomLetters()
 
+        var buttonIndex = 0
         for (i in 0 until gridLayout.rowCount) {
             for (j in 0 until gridLayout.columnCount) {
-                val button = Button(context).apply {
-                    text = letters[i * gridLayout.columnCount + j].toString()
-                    setOnClickListener { handleLetterClick(this, i, j) }
-                }
-                gridLayout.addView(button)
+                val button = gridLayout.getChildAt(buttonIndex) as? Button
+                button?.text = letters[i * gridLayout.columnCount + j].toString()
+                button?.setOnClickListener { handleLetterClick(button, i, j) }
+                buttonIndex++
             }
         }
     }
+
 
     private fun handleLetterClick(button: Button, row: Int, col: Int) {
         if (selectedLetters.isEmpty() || isValidAdjacentButton(button, row, col)) {
@@ -75,12 +76,13 @@ class GameFragment : Fragment() {
     }
     private fun updateSelectedWord() {
         val selectedWord = selectedLetters.joinToString(separator = "") { it.text.toString() }
-        // Assuming gameActions has a method to update the selected word in the MainActivity or ScoreFragment
         gameActions.updateSelectedWord(selectedWord)
     }
 
     fun clearSelection() {
-        TODO("Not yet implemented")
+        selectedLetters.forEach { it.isEnabled = true }
+        selectedLetters.clear()
+        updateSelectedWord()
     }
 
     companion object {
