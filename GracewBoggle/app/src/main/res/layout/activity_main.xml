@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:orientation="vertical">
 
-    <!-- Current Word Display Container -->
     <LinearLayout
         android:id="@+id/currentWordContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="16dp"
-        android:layout_alignParentBottom="true">
+        android:padding="16dp">
 
-        <!-- Label for the current word -->
         <TextView
             android:id="@+id/currentWordTextView"
             android:layout_width="wrap_content"
@@ -22,7 +20,6 @@
             android:textSize="18sp"
             android:text="Current Word: "/>
 
-        <!-- Dynamically updated TextView for displaying the selected word -->
         <TextView
             android:id="@+id/currentWord"
             android:layout_width="wrap_content"
@@ -31,28 +28,17 @@
             android:textColor="@android:color/holo_blue_dark"/>
     </LinearLayout>
 
-    <!-- Fragment Container -->
     <FrameLayout
-        android:id="@+id/fragmentContainer"
+        android:id="@+id/gameFragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/currentWordContainer"
-        android:layout_alignParentTop="true">
-
-        <include
-            layout="@layout/fragment_game"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
     </FrameLayout>
 
-    <!-- Include the layout from fragment_game.xml -->
-
-    <!-- Include the layout from fragment_score.xml -->
-    <include layout="@layout/fragment_score"
+    <FrameLayout
+        android:id="@+id/scoreFragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible" />
+        android:layout_height="wrap_content">
+    </FrameLayout>
 
-</RelativeLayout>
-
+</LinearLayout>

@@ -20,18 +20,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onSubmitWord(word: String) {
-        val scoreFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as? ScoreFragment
+        val scoreFragment = supportFragmentManager.findFragmentById(R.id.scoreFragmentContainer) as? ScoreFragment
         scoreFragment?.validateWord(word)
     }
 
     fun onClearWord() {
-        val gameFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as? GameFragment
+        val gameFragment = supportFragmentManager.findFragmentById(R.id.gameFragmentContainer) as? GameFragment
         gameFragment?.clearSelection()
     }
 
     fun onNewGame() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, GameFragment.newInstance())
+            .replace(R.id.gameFragmentContainer, GameFragment.newInstance())
             .commitNow()
     }
 

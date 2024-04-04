@@ -14,8 +14,8 @@
         android:layout_height="75dp"
         android:layout_margin="4dp"
         android:text=""
-        android:background="@drawable/square_button_bg"
-        android:layout_gravity="center"/>
+        android:background="@drawable/square_button_bg"/>
+
     <Button
         android:id="@+id/button2"
         android:layout_width="75dp"
