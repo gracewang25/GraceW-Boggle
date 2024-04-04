@@ -1,14 +1,16 @@
 package com.example.gracew_boggle
 
-import androidx.fragment.app.viewModels
+
+
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 
 class GameFragment : Fragment() {
 
@@ -17,7 +19,7 @@ class GameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gameActions = activity as GameActions
+        gameActions = activity as? GameActions ?: throw ClassCastException("Hosting activity must implement GameActions")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -25,42 +27,49 @@ class GameFragment : Fragment() {
         setupBoard(view)
         return view
     }
+    private fun generateRandomLetters(): List<Char> {
+        val vowels = listOf('A', 'E', 'I', 'O', 'U')
+        val consonants = ('A'..'Z').filterNot { it in vowels }
+        return (List(8) { vowels.random() } + List(8) { consonants.random() }).shuffled()
+    }
 
     private fun setupBoard(view: View) {
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         val letters = generateRandomLetters()
 
-        var buttonIndex = 0
-        for (i in 0 until gridLayout.rowCount) {
-            for (j in 0 until gridLayout.columnCount) {
-                val button = gridLayout.getChildAt(buttonIndex) as? Button
-                button?.text = letters[i * gridLayout.columnCount + j].toString()
-                button?.setOnClickListener { handleLetterClick(button, i, j) }
-                buttonIndex++
+        for (i in 0 until gridLayout.childCount) {
+            val button = gridLayout.getChildAt(i) as Button
+            val letter = letters[i].toString()
+            button.text = letter
+
+            button.setOnClickListener {
+                val row = i / gridLayout.columnCount
+                val col = i % gridLayout.columnCount
+                handleLetterClick(button, row, col)
             }
+
         }
     }
-
-
     private fun handleLetterClick(button: Button, row: Int, col: Int) {
         if (selectedLetters.isEmpty() || isValidAdjacentButton(button, row, col)) {
             selectedLetters.add(button)
-            button.isEnabled = false  // Disable the button to prevent re-selection
-            updateSelectedWord()
+            button.isEnabled = false
+            button.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.selected_letter))
+
+            // Update the currently selected word and display it
+            val selectedWord = selectedLetters.joinToString(separator = "") { it.text.toString() }
+            gameActions.updateSelectedWord(selectedWord)
         } else {
-            Toast.makeText(context, "Letters must be adjacent", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "You may only select connected letters", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun isValidAdjacentButton(button: Button, row: Int, col: Int): Boolean {
-        if (selectedLetters.contains(button)) return false  // Prevent reusing the same letter
-
         val lastButton = selectedLetters.last()
-        val lastPos = getPositionInGrid(lastButton)
-        val currentPos = Pair(row, col)
+        val (lastRow, lastCol) = getPositionInGrid(lastButton)
 
         // Check if the current button is adjacent to the last selected button
-        return Math.abs(lastPos.first - currentPos.first) <= 1 && Math.abs(lastPos.second - currentPos.second) <= 1
+        return (Math.abs(lastRow - row) <= 1) && (Math.abs(lastCol - col) <= 1)
     }
 
     private fun getPositionInGrid(button: Button): Pair<Int, Int> {
@@ -69,20 +78,10 @@ class GameFragment : Fragment() {
         return Pair(index / gridLayout.columnCount, index % gridLayout.columnCount)
     }
 
-    private fun generateRandomLetters(): List<Char> {
-        val vowels = listOf('A', 'E', 'I', 'O', 'U')
-        val consonants = ('A'..'Z').filterNot { it in vowels }
-        return (List(8) { vowels.random() } + List(8) { consonants.random() }).shuffled()
-    }
-    private fun updateSelectedWord() {
-        val selectedWord = selectedLetters.joinToString(separator = "") { it.text.toString() }
-        gameActions.updateSelectedWord(selectedWord)
-    }
-
     fun clearSelection() {
         selectedLetters.forEach { it.isEnabled = true }
         selectedLetters.clear()
-        updateSelectedWord()
+        gameActions.updateSelectedWord("")
     }
 
     companion object {
